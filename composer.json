@@ -1,6 +1,12 @@
 {
     "name": "jones/visitor-log",
-    "description": "",
+    "description": "A package for Laravel 4 to log all visitors",
+	"keywords": [
+		"laravel",
+		"visitor",
+		"log",
+		"sentry"
+	]
     "authors": [
         {
             "name": "Jones",

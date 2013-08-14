@@ -2,5 +2,6 @@
 
 return array(
 	'onlinetime' => 15,
-	'usermodel' => 'Sentry',
+	'usermodel' => 'Laravel',
+	'ignore' => array(),
 );

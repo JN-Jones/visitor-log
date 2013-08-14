@@ -2,14 +2,32 @@
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Session;
 use Jones\VisitorLog\Useragent;
 
 class Visitor extends Model {
 	protected $table = 'visitors';
-	protected $primaryKey = 'ip';
+	protected $primaryKey = 'sid';
 	public $incrementing = false;
 	
 	protected $agents = array();
+
+	public static function isOnline($uid)
+	{
+		$user = Visitor::findUser($uid);
+		
+		return isset($user->sid);
+	}
+	
+	public static function getCurrent()
+	{
+		if(!Session::has('visitor_log_sid'))
+		    return false;
+
+		$sid = Session::get('visitor_log_sid');
+
+		return Visitor::find($sid);
+	}
 	
 	public static function clear()
 	{
@@ -36,14 +54,24 @@ class Visitor extends Model {
 	{
 		$instance = new static;
 
-		return $instance->newQuery()->where('user', '=', (int)$id)->get();
+		return $instance->newQuery()->where('user', '=', (int)$id)->first();
 	}
 
 	public static function findIP($ip)
 	{
 		$instance = new static;
 
-		return $instance->newQuery()->where('ip', '=', $ip)->get();
+		return $instance->newQuery()->where('ip', '=', $ip)->first();
+	}
+
+	public function isUser()
+	{
+		return ($this->user != 0);
+	}
+
+	public function isGuest()
+	{
+		return ($this->user == 0);
 	}
 
 	public function getAgentAttribute()
@@ -77,6 +105,13 @@ class Visitor extends Model {
 		}
 		
 		return $agent;
+	}
+	
+	public function setSidAttribute($value)
+	{
+		$this->attributes['sid'] = $value;
+		
+		Session::put('visitor_log_sid', $value);
 	}
 	
 	/* Wrapper for the Useragent class */

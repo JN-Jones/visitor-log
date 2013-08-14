@@ -37,10 +37,22 @@ class VisitorLogServiceProvider extends ServiceProvider {
 			// First clear out all "old" visitors
 			Visitor::clear();
 
-			$ip = Request::getClientIp();
+			$page = Request::path();
+			$ignore = Config::get('visitor-log::ignore');
+			if(is_array($ignore) && in_array($page, $ignore))
+			    //We ignore this site
+			    return;
+
+			$visitor = Visitor::getCurrent();
 			
-			//Was this user online before?
-			$visitor = Visitor::where('ip', '=', $ip)->first();
+			if(!$visitor)
+			{
+				//We need to add a new user
+				$visitor = new Visitor;
+				$visitor->ip = Request::getClientIp();
+				$visitor->useragent = Request::server('HTTP_USER_AGENT');
+				$visitor->sid = str_random(25);
+			}
 
 			$user = null;
 			$usermodel = strtolower(Config::get('visitor-log::usermodel'));
@@ -54,19 +66,9 @@ class VisitorLogServiceProvider extends ServiceProvider {
 				$user = Sentry::getUser()->id;
 			}
 
-   			if(!$visitor)
-			{
-				//We need to add a new user
-
-				$visitor = new Visitor;
-				
-				$visitor->ip = $ip;
-			}
-
 			//Save/Update the rest
 			$visitor->user = $user;
-			$visitor->useragent = Request::server('HTTP_USER_AGENT');
-			$visitor->page = Request::path();
+			$visitor->page = $page;
 			$visitor->save();
 		});
 	}
