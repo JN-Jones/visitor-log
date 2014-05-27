@@ -2,7 +2,8 @@
 
 A package for Laravel 4 to log all visitors
 
-If anyone has any ideas on how to make this framework agnostic, please contact me or open a pull request.
+##Contributing
+If you have any suggestions or improvements feel free to create an issue or create a Pull Request.
 
 ##Installation
 
