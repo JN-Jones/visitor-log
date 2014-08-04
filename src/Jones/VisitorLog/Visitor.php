@@ -9,9 +9,9 @@ class Visitor extends Model {
 	protected $table = 'visitors';
 	protected $primaryKey = 'sid';
 	public $incrementing = false;
+    public $timestamps = true;
 	
 	protected $agents = array();
-
 
 	public static function isOnline($uid)
 	{
@@ -35,19 +35,17 @@ class Visitor extends Model {
 		$instance = new static;
 		$time = Config::get('visitor-log::onlinetime');
 
-        switch(Config::get('visitor-log::datetype')){
-            case 'timestamps':
-                return $instance->newQuery()->where('updated_at', '<', time()-Config::get('visitor-log::onlinetime')*60)->delete();
-            break;
+        	switch(Config::get('visitor-log::datetype'))
+        	{
+            		case 'timestamps':
+                	return $instance->newQuery()->where('updated_at', '<', time()-Config::get('visitor-log::onlinetime')*60)->delete();
+            		break;
 
-            case 'date':
-                return $instance->newQuery()->where('updated_at', '<', date('Y-m-d H:i:s', strtotime('-'.$time.' minutes')))->delete();
-            break;
-
-            default:
-                return $instance->newQuery()->where('updated_at', '<', date('Y-m-d H:i:s', strtotime('-'.$time.' minutes')))->delete();
-            break;
-        }
+            		case 'date':
+            		default:
+                	return $instance->newQuery()->where('updated_at', '<', date($instance->getDateFormat(), strtotime('-'.$time.' minutes')))->delete();
+            		break;
+        	}
 	}
 
 	public static function loggedIn()
