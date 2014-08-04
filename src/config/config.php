@@ -2,7 +2,7 @@
 
 return array(
     	'datetype' => 'date',
-	'onlinetime' => 1,
+	'onlinetime' => 15,
 	'usermodel' => 'Laravel',
 	'ignore' => array(),
 );
