@@ -35,14 +35,19 @@ class Visitor extends Model {
 		$instance = new static;
 		$time = Config::get('visitor-log::onlinetime');
 
-        if(Config::get('visitor-log::datetype') == 'timestamps')
-        {
-            $delete = $instance->newQuery()->where('updated_at', '<', time()-Config::get('visitor-log::onlinetime')*60)->delete();
+        switch(Config::get('visitor-log::datetype')){
+            case 'timestamps':
+                return $instance->newQuery()->where('updated_at', '<', time()-Config::get('visitor-log::onlinetime')*60)->delete();
+            break;
+
+            case 'date':
+                return $instance->newQuery()->where('updated_at', '<', date('Y-m-d H:i:s', strtotime('-'.$time.' minutes')))->delete();
+            break;
+
+            default:
+                return $instance->newQuery()->where('updated_at', '<', date('Y-m-d H:i:s', strtotime('-'.$time.' minutes')))->delete();
+            break;
         }
-
-        $delete = $instance->newQuery()->where('updated_at', '<', date('Y-m-d H:i:s', strtotime('-'.$time.' minutes')))->delete();
-
-        return $delete;
 	}
 
 	public static function loggedIn()
