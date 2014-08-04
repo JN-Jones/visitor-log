@@ -1,7 +1,8 @@
 <?php
 
 return array(
-	'onlinetime' => 15,
+    	'datetype' => 'date',
+	'onlinetime' => 1,
 	'usermodel' => 'Laravel',
 	'ignore' => array(),
 );
