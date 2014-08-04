@@ -12,6 +12,7 @@ class Visitor extends Model {
 	
 	protected $agents = array();
 
+
 	public static function isOnline($uid)
 	{
 		$user = Visitor::findUser($uid);
@@ -32,8 +33,16 @@ class Visitor extends Model {
 	public static function clear()
 	{
 		$instance = new static;
-		
-		return $instance->newQuery()->where('updated_at', '<', time()-Config::get('visitor-log::onlinetime')*60)->delete();
+		$time = Config::get('visitor-log::onlinetime');
+
+        if(Config::get('visitor-log::datetype') == 'timestamps')
+        {
+            $delete = $instance->newQuery()->where('updated_at', '<', time()-Config::get('visitor-log::onlinetime')*60)->delete();
+        }
+
+        $delete = $instance->newQuery()->where('updated_at', '<', date('Y-m-d H:i:s', strtotime('-'.$time.' minutes')))->delete();
+
+        return $delete;
 	}
 
 	public static function loggedIn()
