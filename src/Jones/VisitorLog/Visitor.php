@@ -9,7 +9,7 @@ class Visitor extends Model {
 	protected $table = 'visitors';
 	protected $primaryKey = 'sid';
 	public $incrementing = false;
-    public $timestamps = true;
+	public $timestamps = true;
 	
 	protected $agents = array();
 
